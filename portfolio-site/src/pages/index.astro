@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../components/layouts/BaseLayout.astro';
+import Navigation from '../components/ui/Navigation.astro';
+import Hero from '../components/sections/Hero.astro';
+import Projects from '../components/sections/Projects.astro';
+import About from '../components/sections/About.astro';
+import Contact from '../components/sections/Contact.astro';
+---
+
+<BaseLayout
+  title="Baltasar Campos — Frontend Engineer"
+  description="Frontend engineer specialising in accessible, performant web experiences. View my projects and get in touch."
+>
+  <Navigation />
+
+  <main id="main-content">
+    <Hero />
+    <Projects />
+    <About />
+    <Contact />
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <p class="footer-text">
+      Built with <a href="https://astro.build" class="footer-link" target="_blank" rel="noopener noreferrer">Astro</a>,
+      <a href="https://react.dev" class="footer-link" target="_blank" rel="noopener noreferrer">React</a>
+      &amp; <a href="https://tailwindcss.com" class="footer-link" target="_blank" rel="noopener noreferrer">Tailwind CSS</a>.
+      &copy; {new Date().getFullYear()} Baltasar Campos.
+    </p>
+  </footer>
+</BaseLayout>
+
+<style>
+  .site-footer {
+    padding: 2rem var(--section-padding-x);
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+  }
+
+  .footer-text {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+
+  .footer-link {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .footer-link:hover {
+    color: var(--color-text);
+  }
+</style>

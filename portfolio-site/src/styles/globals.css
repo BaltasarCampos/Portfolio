@@ -1,0 +1,260 @@
+/* =============================================================================
+   CRITICAL CSS — Inlined in <head> for above-the-fold performance
+   Keep this file lean (~2KB). Non-critical styles go in layout.css
+   ============================================================================= */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Custom Properties — design tokens */
+:root {
+  /* Colors */
+  --color-primary: theme('colors.primary.600');
+  --color-primary-hover: theme('colors.primary.700');
+  --color-bg: theme('colors.neutral.950');
+  --color-bg-surface: theme('colors.neutral.900');
+  --color-bg-elevated: theme('colors.neutral.800');
+  --color-text: theme('colors.neutral.50');
+  --color-text-muted: theme('colors.neutral.400');
+  --color-border: theme('colors.neutral.700');
+  --color-focus: theme('colors.primary.400');
+
+  /* Spacing */
+  --nav-height: 4rem;
+  --section-padding-y: 5rem;
+  --section-padding-x: 1.5rem;
+  --content-max-width: 72rem;
+
+  /* Typography */
+  --font-sans: theme('fontFamily.sans');
+  --font-mono: theme('fontFamily.mono');
+
+  /* Timing */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 600ms;
+  --easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --easing-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* =============================================================================
+   BASE STYLES
+   ============================================================================= */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--nav-height);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  /* Heading hierarchy */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* Links */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Images */
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Form elements inherit font */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    font-size: 1rem; /* minimum 16px to prevent iOS zoom */
+  }
+
+  /* Avoid text overflows */
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  /* Remove list styles on nav elements */
+  nav ul,
+  nav ol {
+    list-style: none;
+  }
+}
+
+/* =============================================================================
+   FOCUS INDICATORS — Keyboard accessibility (WCAG 2.1 AA)
+   ============================================================================= */
+
+@layer base {
+  /* Remove default outlines — we provide custom ones */
+  :focus {
+    outline: none;
+  }
+
+  /* Show focus only for keyboard navigation (not mouse clicks) */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  /* Ensure links have focus indicator */
+  a:focus-visible,
+  button:focus-visible,
+  [role='button']:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+}
+
+/* =============================================================================
+   REDUCED MOTION — Respect user preferences (FR-030)
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =============================================================================
+   SECTION LAYOUT — Shared section structure
+   ============================================================================= */
+
+@layer components {
+  .section {
+    padding: var(--section-padding-y) var(--section-padding-x);
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+  }
+
+  .section-full {
+    padding: var(--section-padding-y) var(--section-padding-x);
+    width: 100%;
+  }
+
+  .section-heading {
+    @apply text-4xl md:text-5xl font-bold mb-4;
+    color: var(--color-text);
+  }
+
+  .section-subheading {
+    @apply text-lg text-neutral-400 mb-12;
+  }
+}
+
+/* =============================================================================
+   SKIP LINK — Accessibility (WCAG 2.4.1)
+   ============================================================================= */
+
+.skip-link {
+  position: absolute;
+  top: -9999px;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  transition: top 0.1s;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* =============================================================================
+   SCREEN READER ONLY — Visually hidden but accessible
+   ============================================================================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* =============================================================================
+   REDUCED MOTION — Honour prefers-reduced-motion: reduce (T074, WCAG 2.3.3)
+   Disables CSS transitions/animations; Framer Motion islands handle their own
+   reduced-motion via useReducedMotion() hook.
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep focus indicators visible even with transitions off */
+  :focus-visible {
+    transition: none !important;
+  }
+
+  /* Disable smooth scroll — instant jumps are less disorienting */
+  html {
+    scroll-behavior: auto !important;
+  }
+}

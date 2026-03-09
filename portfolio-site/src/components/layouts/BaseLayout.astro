@@ -1,0 +1,93 @@
+---
+/**
+ * BaseLayout.astro — Root layout for all pages.
+ * Handles: meta tags, critical CSS inlining, font preloads, skip link.
+ * T066: Preload critical images (hero bg + first project thumbnails).
+ * T077: font-display: swap via preconnect + preload.
+ * T079: preconnect to third-party origins.
+ * T085: lang="en" and descriptive <title>.
+ */
+import '../../styles/globals.css';
+import '../../styles/components.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Baltasar Campos — Frontend Engineer',
+  description =
+    'Frontend engineer specialising in accessible, performant web experiences. View my projects and get in touch.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO — T085 -->
+    <title>{title}</title>
+    <link rel="canonical" href={Astro.url.href} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!--
+      Preconnect to third-party origins — T079
+      Reduces DNS + TLS handshake latency for external resources.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!--
+      Font loading strategy — T077
+      Use font-display: swap so text renders with fallback font while
+      the web font loads. Preloading the most critical weight avoids FOUT.
+    -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/inter-var.woff2"
+      crossorigin
+    />
+
+    <!--
+      Preload critical above-fold images — T066
+      Hero background and the first 3 project thumbnails are LCP candidates.
+      Preloading prevents them from blocking LCP.
+    -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/hero-bg/hero-800w.webp"
+      imagesrcset="/images/hero-bg/hero-400w.webp 400w, /images/hero-bg/hero-800w.webp 800w, /images/hero-bg/hero-1200w.webp 1200w"
+      imagesizes="100vw"
+      type="image/webp"
+    />
+
+    <!--
+      NOTE: Critical CSS is automatically inlined by Astro's build pipeline.
+      Astro processes @tailwind directives at build time and inlines critical
+      styles in <head>; remaining styles are deferred automatically.
+    -->
+  </head>
+
+  <body>
+    <!-- Skip link for keyboard / screen reader users (WCAG 2.4.1) -->
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,44 @@
+---
+/**
+ * Contact.astro — Static section wrapper for the ContactForm React island.
+ * T045: Scroll-triggered entrance animation via IntersectionObserver.
+ */
+import ContactForm from './ContactForm.tsx';
+---
+
+<section id="contact" class="contact-section" aria-labelledby="contact-heading">
+  <div class="section">
+    <h2 id="contact-heading" class="section-heading">Get in Touch</h2>
+    <p class="section-subheading">
+      Have a project in mind or want to say hello? I'd love to hear from you.
+    </p>
+
+    <ContactForm client:visible />
+  </div>
+</section>
+
+<style>
+  .contact-section {
+    background-color: var(--color-bg-surface);
+    padding-block: var(--section-padding-y);
+  }
+</style>
+
+<!-- T045: Add .contact-section--visible when section enters viewport -->
+<script>
+  const section = document.getElementById('contact');
+  if (section && typeof IntersectionObserver !== 'undefined') {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('contact-section--visible');
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(section);
+  }
+</script>

@@ -1,0 +1,41 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Production Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: portfolio-site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: portfolio-site
+        run: npm ci
+
+      - name: Build
+        working-directory: portfolio-site
+        run: npm run build
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          ENGINEER_EMAIL: ${{ secrets.ENGINEER_EMAIL }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          PUBLIC_SITE_URL: ${{ secrets.PUBLIC_SITE_URL }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: portfolio-site/dist
+          retention-days: 7

@@ -1,0 +1,132 @@
+---
+/**
+ * Hero.astro — Above-the-fold hero section.
+ * Static HTML/CSS — zero JavaScript. Animations are handled by the
+ * HeroAnimated React island that wraps the content when JS is available.
+ * Falls back to instant visibility when JS is disabled or not yet loaded.
+ */
+import Button from '../ui/Button.astro';
+---
+
+<section
+  id="hero"
+  class="hero-section"
+  aria-label="Introduction"
+>
+  <div class="hero-content">
+    <!-- Static content visible immediately — no JS dependency -->
+    <p class="hero-eyebrow">Hello, I'm</p>
+
+    <h1 class="hero-heading">
+      Baltasar Campos
+    </h1>
+
+    <p class="hero-role">
+      Frontend Engineer
+    </p>
+
+    <p class="hero-statement">
+      I build fast, accessible, and polished web experiences. Focused on performance,
+      clean architecture, and the details that make the difference.
+    </p>
+
+    <div class="hero-cta-group">
+      <Button href="#projects" variant="primary" aria-label="View my projects">
+        View Projects
+        <svg
+          aria-hidden="true"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 8h10M9 4l4 4-4 4"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </Button>
+      <Button href="#contact" variant="secondary">
+        Get in touch
+      </Button>
+    </div>
+  </div>
+
+  <!-- Decorative background gradient -->
+  <div class="hero-bg" aria-hidden="true"></div>
+</section>
+
+<style>
+  .hero-section {
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    padding: calc(var(--nav-height) + 4rem) var(--section-padding-x) 4rem;
+    overflow: hidden;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .hero-eyebrow {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    font-size: 0.9375rem;
+  }
+
+  .hero-heading {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-role {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-statement {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.65;
+    color: var(--color-text-muted);
+    max-width: 54ch;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  /* Decorative gradient blob */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(37, 99, 235, 0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 70%, rgba(37, 99, 235, 0.06) 0%, transparent 60%);
+  }
+</style>

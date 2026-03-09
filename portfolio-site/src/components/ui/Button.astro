@@ -1,0 +1,131 @@
+---
+/**
+ * Button.astro — Reusable button/link component.
+ * Renders as <a> when `href` is provided, otherwise <button>.
+ * All variants meet WCAG 2.1 AA minimum touch target size (48px).
+ */
+interface Props {
+  /** Renders as <a href="..."> when provided */
+  href?: string;
+  /** Visual style variant */
+  variant?: 'primary' | 'secondary' | 'ghost';
+  /** Button type (only applies when rendered as <button>) */
+  type?: 'button' | 'submit' | 'reset';
+  /** Disables the button/link */
+  disabled?: boolean;
+  /** Additional CSS classes */
+  class?: string;
+  /** aria-label override (useful for icon-only buttons) */
+  'aria-label'?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  type = 'button',
+  disabled = false,
+  class: extraClass = '',
+  'aria-label': ariaLabel,
+} = Astro.props;
+
+const baseClass = [
+  'btn',
+  `btn--${variant}`,
+  disabled ? 'btn--disabled' : '',
+  extraClass,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+{
+  href ? (
+    <a
+      href={disabled ? undefined : href}
+      class={baseClass}
+      aria-label={ariaLabel}
+      aria-disabled={disabled ? 'true' : undefined}
+      role="link"
+    >
+      <slot />
+    </a>
+  ) : (
+    <button
+      type={type}
+      class={baseClass}
+      disabled={disabled}
+      aria-label={ariaLabel}
+    >
+      <slot />
+    </button>
+  )
+}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 48px; /* WCAG 2.1 AA minimum touch target */
+    padding: 0.75rem 1.75rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    border: 2px solid transparent;
+    text-decoration: none;
+    transition:
+      background-color var(--duration-base),
+      color var(--duration-base),
+      border-color var(--duration-base),
+      transform 100ms,
+      box-shadow var(--duration-base);
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .btn:active:not(.btn--disabled) {
+    transform: scale(0.98);
+  }
+
+  /* Primary */
+  .btn--primary {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border-color: var(--color-primary);
+  }
+  .btn--primary:hover:not(.btn--disabled) {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+  }
+
+  /* Secondary */
+  .btn--secondary {
+    background-color: transparent;
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+  .btn--secondary:hover:not(.btn--disabled) {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: var(--color-text-muted);
+  }
+
+  /* Ghost */
+  .btn--ghost {
+    background-color: transparent;
+    color: var(--color-primary);
+    border-color: transparent;
+  }
+  .btn--ghost:hover:not(.btn--disabled) {
+    background-color: rgba(37, 99, 235, 0.1);
+  }
+
+  /* Disabled */
+  .btn--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+</style>

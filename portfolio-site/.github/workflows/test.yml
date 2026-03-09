@@ -1,0 +1,43 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, 'feature/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  unit-integration:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: portfolio-site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: portfolio-site
+        run: npm ci
+
+      - name: Type check
+        working-directory: portfolio-site
+        run: npm run type-check
+
+      - name: Lint
+        working-directory: portfolio-site
+        run: npm run lint
+
+      - name: Run tests with coverage
+        working-directory: portfolio-site
+        run: npm run test:coverage
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          directory: portfolio-site/coverage
+          fail_ci_if_error: false

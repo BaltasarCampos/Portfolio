@@ -1,0 +1,47 @@
+# netlify.toml — Deployment configuration for Netlify
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  command   = "npm run build"
+  publish   = "dist"
+
+[functions]
+  directory         = "netlify/functions"
+  node_bundler      = "esbuild"
+  included_files    = ["src/utils/validation.ts", "src/types/index.ts"]
+
+# Redirect /api/contact → the Netlify function (keeps a clean URL)
+[[redirects]]
+  from   = "/api/contact"
+  to     = "/.netlify/functions/contact"
+  status = 200
+
+# SPA-style 404 fallback (Astro handles its own 404.astro, but belt-and-suspenders)
+[[redirects]]
+  from   = "/*"
+  to     = "/404"
+  status = 404
+
+# Security headers applied to all routes
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options           = "DENY"
+    X-Content-Type-Options    = "nosniff"
+    Referrer-Policy           = "strict-origin-when-cross-origin"
+    Permissions-Policy        = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy   = """
+      default-src 'self';
+      script-src  'self' 'unsafe-inline';
+      style-src   'self' 'unsafe-inline';
+      img-src     'self' data: https:;
+      font-src    'self';
+      connect-src 'self';
+      frame-ancestors 'none';
+    """
+
+# Long-lived cache for immutable static assets (Astro fingerprints filenames)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

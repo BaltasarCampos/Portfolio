@@ -4,13 +4,19 @@
  *
  * Usage:
  *   npm run optimize-images
- *   npm run optimize-images -- --input public/images/projects --output public/images/optimized
+ *
+ * Source images:  public/images/projects/src/   ← place originals here
+ * Output images:  public/images/projects/        ← optimized variants land here
  *
  * For each source image it produces:
- *   - <name>.webp          (primary format, max 1200px wide)
- *   - <name>@2x.webp       (retina variant, max 2400px wide)
- *   - <name>.jpg           (JPEG fallback, max 1200px wide)
- *   - <name>-thumb.webp    (280px thumbnail for grid cards)
+ *   - <name>-400w.webp    (WebP, 400px wide)
+ *   - <name>-800w.webp    (WebP, 800px wide)
+ *   - <name>-1200w.webp   (WebP, 1200px wide)
+ *   - <name>-400w.jpg     (JPEG fallback, 400px wide)
+ *   - <name>-800w.jpg     (JPEG fallback, 800px wide)
+ *   - <name>-1200w.jpg    (JPEG fallback, 1200px wide)
+ *
+ * These filenames match exactly what buildSrcSet() in src/utils/image.ts expects.
  */
 
 import sharp from 'sharp';
@@ -20,14 +26,11 @@ import { existsSync } from 'node:fs';
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
-const INPUT_DIR = process.argv[3] ?? 'public/images/projects';
-const OUTPUT_DIR = process.argv[5] ?? 'public/images/optimized';
+const INPUT_DIR = 'public/images/projects/src';
+const OUTPUT_DIR = 'public/images/projects';
 
-const SIZES = {
-  standard: 1200,
-  retina: 2400,
-  thumbnail: 280,
-} as const;
+/** Must match SRCSET_WIDTHS in src/utils/image.ts */
+const WIDTHS = [400, 800, 1200] as const;
 
 const QUALITY = {
   webp: 82,
@@ -51,47 +54,30 @@ async function processImage(inputPath: string, outputDir: string): Promise<void>
   if (!SUPPORTED_EXTS.has(ext)) return;
 
   const name = basename(inputPath, ext);
-  const base = sharp(inputPath);
-  const meta = await base.metadata();
-  const srcWidth = meta.width ?? SIZES.standard;
 
-  // Standard WebP
-  const stdWidth = Math.min(srcWidth, SIZES.standard);
-  await sharp(inputPath)
-    .resize({ width: stdWidth, withoutEnlargement: true })
-    .webp({ quality: QUALITY.webp })
-    .toFile(join(outputDir, `${name}.webp`));
-
-  // Retina WebP (only if source is large enough)
-  if (srcWidth > SIZES.standard) {
-    const retWidth = Math.min(srcWidth, SIZES.retina);
+  for (const width of WIDTHS) {
+    // WebP variant
     await sharp(inputPath)
-      .resize({ width: retWidth, withoutEnlargement: true })
+      .resize({ width, withoutEnlargement: true })
       .webp({ quality: QUALITY.webp })
-      .toFile(join(outputDir, `${name}@2x.webp`));
+      .toFile(join(outputDir, `${name}-${width}w.webp`));
+
+    // JPEG fallback
+    await sharp(inputPath)
+      .resize({ width, withoutEnlargement: true })
+      .jpeg({ quality: QUALITY.jpeg, progressive: true, mozjpeg: true })
+      .toFile(join(outputDir, `${name}-${width}w.jpg`));
   }
 
-  // JPEG fallback
-  await sharp(inputPath)
-    .resize({ width: stdWidth, withoutEnlargement: true })
-    .jpeg({ quality: QUALITY.jpeg, progressive: true, mozjpeg: true })
-    .toFile(join(outputDir, `${name}.jpg`));
-
-  // Thumbnail WebP
-  await sharp(inputPath)
-    .resize({ width: SIZES.thumbnail, height: SIZES.thumbnail, fit: 'cover' })
-    .webp({ quality: QUALITY.webp })
-    .toFile(join(outputDir, `${name}-thumb.webp`));
-
-  log(`✓ ${name}${ext} → webp + jpg + thumb`);
+  log(`✓ ${name}${ext} → ${WIDTHS.map((w) => `${w}w`).join(', ')} (webp + jpg)`);
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
   if (!existsSync(INPUT_DIR)) {
-    log(`Input directory not found: ${INPUT_DIR}`);
-    log('Create the directory and add your project images, then re-run this script.');
+    await mkdir(INPUT_DIR, { recursive: true });
+    log(`Created ${INPUT_DIR} — place your original images there and re-run.`);
     process.exit(0);
   }
 
@@ -102,6 +88,7 @@ async function main() {
 
   if (images.length === 0) {
     log(`No supported images found in ${INPUT_DIR}`);
+    log('Place your original project screenshots there and re-run.');
     process.exit(0);
   }
 

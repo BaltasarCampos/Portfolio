@@ -8,6 +8,7 @@ import { useState, useMemo, useId, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion.ts';
 import { cardVariants, staggerContainerVariants, instantVariants } from '../../animations/variants.ts';
+import { getImageProps } from '../../utils/image.ts';
 import type { Project, ProjectCategory } from '../../types/index.ts';
 import type { categoryLabels as CategoryLabels } from '../../data/technologies.ts';
 
@@ -208,19 +209,34 @@ export default function ProjectsGrid({
 // ---------------------------------------------------------------------------
 
 function ProjectCard({ project }: { project: Project }): React.JSX.Element {
+  // Strip extension from src to get the base path buildSrcSet expects
+  const baseSrc = project.thumbnail.src.replace(/\.[^.]+$/, '');
+  const imgProps = getImageProps({
+    src: baseSrc,
+    alt: project.thumbnail.alt,
+    width: project.thumbnail.width,
+    height: project.thumbnail.height,
+    loading: 'lazy',
+    className: 'card-image',
+  });
+
   return (
     <article className="card" aria-label={project.title}>
       {/* Thumbnail */}
       <div className="card-image-wrapper">
-        <img
-          src={project.thumbnail.src}
-          alt={project.thumbnail.alt}
-          width={project.thumbnail.width}
-          height={project.thumbnail.height}
-          loading="lazy"
-          decoding="async"
-          className="card-image"
-        />
+        <picture>
+          <source type="image/webp" srcSet={imgProps.webpSrcSet} sizes={imgProps.sizes} />
+          <source type="image/jpeg" srcSet={imgProps.jpegSrcSet} sizes={imgProps.sizes} />
+          <img
+            src={imgProps.fallbackSrc}
+            alt={imgProps.alt}
+            width={imgProps.width}
+            height={imgProps.height}
+            loading={imgProps.loading}
+            decoding={imgProps.decoding}
+            className={imgProps.className}
+          />
+        </picture>
       </div>
 
       <div className="card-body">

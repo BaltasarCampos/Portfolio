@@ -9,6 +9,7 @@
     "noFallthroughCasesInSwitch": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react",
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],

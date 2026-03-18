@@ -61,7 +61,7 @@ Use this checklist before every production deployment and after deployment to ve
 
 Verify the following are set in the Netlify dashboard for the production environment:
 
-- [ ] `SENDGRID_API_KEY` — valid and active
+- [ ] `RESEND_API_KEY` — valid and active
 - [ ] `ENGINEER_EMAIL` — correct delivery address
 - [ ] `RATE_LIMIT_KV` (Netlify KV binding) — connected
 - [ ] `ALLOWED_ORIGIN` — set to production domain (e.g. `https://baltasarcampos.dev`)

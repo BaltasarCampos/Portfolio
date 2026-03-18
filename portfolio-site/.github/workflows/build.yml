@@ -28,7 +28,7 @@ jobs:
         working-directory: portfolio-site
         run: npm run build
         env:
-          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           ENGINEER_EMAIL: ${{ secrets.ENGINEER_EMAIL }}
           FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
           PUBLIC_SITE_URL: ${{ secrets.PUBLIC_SITE_URL }}

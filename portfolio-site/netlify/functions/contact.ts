@@ -3,14 +3,14 @@
  *
  * Responsibilities (T047–T051):
  *  T047 — Request parsing + routing
- *  T048 — SendGrid email delivery
+ *  T048 — Resend email delivery
  *  T049 — In-memory rate limiting (3 req / IP / hour)
  *  T050 — Honeypot spam detection
  *  T051 — CORS headers
  */
 
 import type { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 import { v4 as uuidv4 } from 'uuid';
 import { validateContactForm, isFormValid } from '../../src/utils/validation';
 import type { ContactFormRequest, ContactFormResponse } from '../../src/types/index';
@@ -115,8 +115,8 @@ export const handler: Handler = async (event: HandlerEvent, _ctx: HandlerContext
     });
   }
 
-  // ── SendGrid email (T048) ─────────────────────────────────────────────────
-  const apiKey = process.env['SENDGRID_API_KEY'];
+  // ── Resend email (T048) ───────────────────────────────────────────────────
+  const apiKey = process.env['RESEND_API_KEY'];
   const toEmail = process.env['ENGINEER_EMAIL'];
   const fromEmail = process.env['FROM_EMAIL'];
 
@@ -128,7 +128,7 @@ export const handler: Handler = async (event: HandlerEvent, _ctx: HandlerContext
     });
   }
 
-  sgMail.setApiKey(apiKey);
+  const resend = new Resend(apiKey);
 
   const submissionId = uuidv4();
   const timestamp = new Date().toISOString();
@@ -158,7 +158,7 @@ ${message}
 `.trim();
 
   try {
-    await sgMail.send({
+    await resend.emails.send({
       to: toEmail,
       from: fromEmail,
       replyTo: email,
@@ -167,7 +167,7 @@ ${message}
       html: htmlBody,
     });
   } catch (err) {
-    console.error('[contact] SendGrid error:', err);
+    console.error('[contact] Resend error:', err);
     return jsonResponse(500, {
       success: false,
       error: 'Failed to send message. Please try again later.',

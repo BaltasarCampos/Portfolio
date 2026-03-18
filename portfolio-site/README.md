@@ -29,7 +29,7 @@ A personal portfolio built with **Astro 5**, **React 18**, **TypeScript**, **Tai
 | Animation | Framer Motion 12 |
 | TypeScript | Strict mode, path aliases |
 | Testing | Vitest (unit/integration) + Playwright (E2E) |
-| Email | SendGrid via `@sendgrid/mail` |
+| Email | Resend via `resend` |
 | Hosting | Netlify (static + serverless functions) |
 
 ---
@@ -65,9 +65,9 @@ Copy `.env.example` to `.env.local` and set each value:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `SENDGRID_API_KEY` | ✅ | SendGrid API key for sending email |
+| `RESEND_API_KEY` | ✅ | Resend API key for sending email (starts with `re_`) |
 | `ENGINEER_EMAIL` | ✅ | Your email address — where submissions are delivered |
-| `FROM_EMAIL` | ✅ | Verified SendGrid sender address |
+| `FROM_EMAIL` | ✅ | Verified Resend sender address (or `onboarding@resend.dev` for testing) |
 | `RATE_LIMIT_MAX_PER_HOUR` | optional | Max contact form submissions per IP per hour (default: `3`) |
 | `PUBLIC_SITE_URL` | optional | Canonical site URL for CORS (default: `http://localhost:4321`) |
 
@@ -262,7 +262,7 @@ The included **GitHub Actions** workflows run type-check, lint, and tests on eve
 
 ### Contact form
 
-The form POSTs to `/api/contact`, redirected by `netlify.toml` to `/.netlify/functions/contact`. The function validates input, checks the honeypot, enforces rate limiting (3 req/IP/hr), and sends email via **SendGrid**.
+The form POSTs to `/api/contact`, redirected by `netlify.toml` to `/.netlify/functions/contact`. The function validates input, checks the honeypot, enforces rate limiting (3 req/IP/hr), and sends email via **Resend**.
 
 For local development, run with [Netlify CLI](https://docs.netlify.com/cli/get-started/):
 

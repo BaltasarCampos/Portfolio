@@ -65,9 +65,14 @@ const {
 
     <!--
       Preload critical above-fold images — T066
-      Hero background and the first 3 project thumbnails are LCP candidates.
-      Preloading prevents them from blocking LCP.
+      Hero background is an LCP candidate; preloading prevents render blocking.
+      Update href/imagesrcset once hero images are optimized via:
+        1. Place hero source in public/images/hero-bg/src/hero.jpg
+        2. Run: npm run optimize-images (after updating INPUT_DIR for hero-bg)
+         OR manually place hero-400w.webp, hero-800w.webp, hero-1200w.webp
+            in public/images/hero-bg/
     -->
+    <!--
     <link
       rel="preload"
       as="image"
@@ -76,6 +81,7 @@ const {
       imagesizes="100vw"
       type="image/webp"
     />
+    -->
 
     <!--
       NOTE: Critical CSS is automatically inlined by Astro's build pipeline.

@@ -22,88 +22,24 @@ export const projects: readonly Project[] = [
       width: 1200,
       height: 630,
     },
-    repositoryUrl: 'https://github.com/BaltasarCampos/portfolio',
+    repositoryUrl: 'https://github.com/BaltasarCampos/Portfolio',
   },
   {
-    id: 'react-design-system',
-    title: 'React Design System',
+    id: 'colla-board',
+    title: 'Colla-Board',
     description:
-      'A component library with 40+ accessible React components, Storybook documentation, and automated visual regression testing. Built with TypeScript and Radix UI primitives.',
-    technologies: ['React', 'TypeScript', 'Storybook', 'Radix UI', 'CSS Modules'],
-    category: 'design-system',
+      'A collaborative whiteboard app with real-time drawing, undo/redo, and multi-user support built with React and Socket.IO. Features a custom canvas component, user presence indicators, and responsive design.',
+    technologies: ['React', 'Node.js', 'Socket.IO', 'Express', 'Canvas API'],
+    category: 'web-app',
     featured: true,
     thumbnail: {
-      src: '/images/projects/design-system-placeholder.jpg',
-      alt: 'Screenshot of the design system Storybook showing component variations and documentation',
+      src: '/images/projects/colla-board-placeholder.jpg',
+      alt: 'Screenshot of the Colla-Board app showing the whiteboard interface with drawing tools and user presence indicators',
       width: 1200,
       height: 630,
     },
-  },
-  {
-    id: 'nextjs-dashboard',
-    title: 'Analytics Dashboard',
-    description:
-      'A real-time analytics dashboard built with Next.js 14 and server components. Visualises user engagement data with recharts and includes dark mode support.',
-    technologies: ['Next.js', 'TypeScript', 'Recharts', 'Tailwind CSS', 'Prisma'],
-    category: 'web-app',
-    featured: false,
-    thumbnail: {
-      src: '/images/projects/dashboard-placeholder.jpg',
-      alt: 'Screenshot of analytics dashboard showing line charts and engagement metrics',
-      width: 1200,
-      height: 630,
-    },
-    demoUrl: 'https://dashboard-demo.example.com',
-  },
-  {
-    id: 'cli-tool',
-    title: 'Dev Workflow CLI',
-    description:
-      'A Node.js CLI tool that automates repetitive development tasks: project scaffolding, Git branch management, and dependency auditing. 500+ weekly npm downloads.',
-    technologies: ['Node.js', 'TypeScript', 'Commander.js', 'Inquirer'],
-    category: 'tool',
-    featured: false,
-    thumbnail: {
-      src: '/images/projects/cli-placeholder.jpg',
-      alt: 'Terminal window showing the CLI tool running a project scaffolding command',
-      width: 1200,
-      height: 630,
-    },
-    repositoryUrl: 'https://github.com/BaltasarCampos/dev-cli',
-  },
-  {
-    id: 'open-source-contrib',
-    title: 'Open Source Contributions',
-    description:
-      'A curated collection of pull requests merged into popular open-source projects, including bug fixes and documentation improvements for React Query, Vite, and MDX.',
-    technologies: ['React', 'TypeScript', 'Vite', 'MDX'],
-    category: 'open-source',
-    featured: false,
-    thumbnail: {
-      src: '/images/projects/oss-placeholder.jpg',
-      alt: 'GitHub profile page showing open source contribution graph and merged pull requests',
-      width: 1200,
-      height: 630,
-    },
-    demoUrl: 'https://github.com/BaltasarCampos',
-  },
-  {
-    id: 'animation-experiments',
-    title: 'Animation Playground',
-    description:
-      'A collection of creative web animations exploring Framer Motion, CSS custom properties, and the Web Animations API. Each experiment is self-contained and documented.',
-    technologies: ['React', 'Framer Motion', 'TypeScript', 'CSS'],
-    category: 'experiment',
-    featured: false,
-    thumbnail: {
-      src: '/images/projects/animations-placeholder.jpg',
-      alt: 'Preview of animated UI components including fluid transitions and micro-interactions',
-      width: 1200,
-      height: 630,
-    },
-    demoUrl: 'https://animations.example.com',
-    repositoryUrl: 'https://github.com/BaltasarCampos/animation-experiments',
-  },
+    repositoryUrl: 'https://github.com/BaltasarCampos/colla-board',
+  }
 ];
 
 export default projects;

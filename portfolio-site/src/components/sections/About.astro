@@ -12,18 +12,20 @@
       <h2 id="about-heading" class="section-heading">About Me</h2>
 
       <p class="about-bio">
-        I'm a frontend engineer with a focus on building web experiences that are fast, accessible,
-        and a pleasure to use. I care deeply about the craft — from semantic HTML and keyboard
-        navigation to smooth animations that respect motion preferences.
+        I'm a frontend engineer at the start of my career, passionate about building
+        web experiences that are fast, accessible, and genuinely enjoyable to use.
+        I've spent the past year deepening my skills through self-directed projects —
+        the kind that push me to solve real problems.
       </p>
       <p class="about-bio">
-        I've worked across the stack but feel most at home in the frontend, translating complex
-        requirements into clean, maintainable code. I believe good software is invisible: it just
-        works, for everyone.
+        My focus is the JavaScript and React ecosystem. I care about the details that
+        matter: semantic HTML, keyboard navigation, performance on real devices, and
+        animations that respect motion preferences. I believe good UI is invisible —
+        it just works, for everyone.
       </p>
       <p class="about-bio">
-        When I'm not writing TypeScript, I'm probably reading about compilers, experimenting with
-        CSS, or contributing to open source.
+        I'm actively looking for my first professional role where I can contribute,
+        keep learning fast, and grow alongside a team that takes craft seriously.
       </p>
 
       <div class="about-skills-section" aria-label="Core technical skills">
@@ -32,12 +34,12 @@
           {
             [
               'TypeScript / JavaScript',
-              'React & React ecosystem',
-              'Astro & SSG / SSR',
+              'React',
+              'Node.js & REST APIs',
+              'Next.js',
               'Tailwind CSS & CSS',
               'Accessibility (WCAG 2.1 AA)',
-              'Performance optimisation',
-              'Node.js & Edge Functions',
+              'Git & GitHub Actions',
               'Testing (Vitest, Playwright)',
             ].map((skill) => (
               <li class="about-skill-item">{skill}</li>
@@ -45,18 +47,6 @@
           }
         </ul>
       </div>
-
-      <a
-        href="/cv.pdf"
-        class="about-cv-link"
-        download
-        aria-label="Download CV as PDF"
-      >
-        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 16l-4-4h3V4h2v8h3l-4 4zM4 18h16v2H4v-2z" fill="currentColor"/>
-        </svg>
-        Download CV
-      </a>
     </div>
   </div>
 </section>
@@ -119,28 +109,6 @@
     border-radius: 50%;
     background-color: var(--color-primary);
     flex-shrink: 0;
-  }
-
-  .about-cv-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    border: 2px solid var(--color-primary);
-    transition:
-      background-color var(--duration-base),
-      color var(--duration-base);
-    min-height: 48px;
-  }
-
-  .about-cv-link:hover {
-    background-color: var(--color-primary);
-    color: #fff;
   }
 
   /* T037 — scroll-triggered animation (JS adds .is-visible class) */

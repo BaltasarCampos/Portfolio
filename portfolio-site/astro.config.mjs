@@ -5,6 +5,9 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
+  // Set to your production URL so Astro.url, canonical links, and sitemap are correct.
+  // Override locally via: ASTRO_SITE=http://localhost:4321 npm run dev
+  site: process.env.ASTRO_SITE ?? 'https://bcbportfolio.netlify.app',
   integrations: [
     react(),
     tailwind({

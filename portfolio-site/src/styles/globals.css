@@ -1,4 +1,16 @@
 /* =============================================================================
+   FONTS — Self-hosted Inter variable font
+   ============================================================================= */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-var.woff2') format('woff2');
+  font-weight: 100 900;   /* variable font covers all weights */
+  font-style: normal;
+  font-display: swap;     /* show fallback immediately, swap when loaded */
+}
+
+/* =============================================================================
    CRITICAL CSS — Inlined in <head> for above-the-fold performance
    Keep this file lean (~2KB). Non-critical styles go in layout.css
    ============================================================================= */

@@ -44,16 +44,9 @@ const {
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
     <!--
-      Preconnect to third-party origins — T079
-      Reduces DNS + TLS handshake latency for external resources.
-    -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!--
       Font loading strategy — T077
-      Use font-display: swap so text renders with fallback font while
-      the web font loads. Preloading the most critical weight avoids FOUT.
+      Self-hosted Inter variable font via /fonts/inter-var.woff2.
+      Preloading prevents FOUT; font-display: swap is set in globals.css.
     -->
     <link
       rel="preload"

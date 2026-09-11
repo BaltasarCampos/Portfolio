@@ -18,14 +18,12 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: portfolio-site/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        working-directory: portfolio-site
         run: npm ci
 
       - name: Build
-        working-directory: portfolio-site
         run: npm run build
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
@@ -37,5 +35,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: portfolio-site/dist
+          path: dist
           retention-days: 7

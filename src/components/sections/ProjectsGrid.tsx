@@ -5,12 +5,36 @@
  */
 
 import { useState, useMemo, useId, useCallback } from 'react';
+import type React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion.ts';
 import { cardVariants, staggerContainerVariants, instantVariants } from '../../animations/variants.ts';
 import { getImageProps } from '../../utils/image.ts';
 import type { Project, ProjectCategory } from '../../types/index.ts';
 import type { categoryLabels as CategoryLabels } from '../../data/technologies.ts';
+
+const NAVIGATION_KEYS = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'] as const;
+type NavigationKey = (typeof NAVIGATION_KEYS)[number];
+
+/**
+ * T054 — computes the roving-tabindex target index for a filter-pill group.
+ * Extracted so its own branching stays under the complexity budget separately
+ * from handlePillKeyDown (which just applies focus).
+ */
+function getNextPillIndex(key: NavigationKey, currentIndex: number, pillCount: number): number {
+  if (key === 'ArrowRight' || key === 'ArrowDown') {
+    return currentIndex < pillCount - 1 ? currentIndex + 1 : 0;
+  }
+  if (key === 'ArrowLeft' || key === 'ArrowUp') {
+    return currentIndex > 0 ? currentIndex - 1 : pillCount - 1;
+  }
+  if (key === 'Home') return 0;
+  return pillCount - 1; // 'End'
+}
+
+function isNavigationKey(key: string): key is NavigationKey {
+  return (NAVIGATION_KEYS as readonly string[]).includes(key);
+}
 
 interface ProjectsGridProps {
   projects: readonly Project[];
@@ -72,29 +96,16 @@ export default function ProjectsGrid({
    */
   const handlePillKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (!isNavigationKey(e.key)) return;
+      e.preventDefault();
+
       const group = e.currentTarget;
       const pills = Array.from(group.querySelectorAll<HTMLButtonElement>('.filter-pill'));
       const focused = document.activeElement as HTMLButtonElement | null;
       const idx = focused ? pills.indexOf(focused) : -1;
 
-      let next = -1;
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        next = idx < pills.length - 1 ? idx + 1 : 0;
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        next = idx > 0 ? idx - 1 : pills.length - 1;
-      } else if (e.key === 'Home') {
-        e.preventDefault();
-        next = 0;
-      } else if (e.key === 'End') {
-        e.preventDefault();
-        next = pills.length - 1;
-      }
-
-      if (next !== -1) {
-        pills[next]?.focus();
-      }
+      const next = getNextPillIndex(e.key, idx, pills.length);
+      pills[next]?.focus();
     },
     [],
   );

@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import ProjectsGrid from '../../../src/components/sections/ProjectsGrid';
 import type { Project, ProjectCategory } from '../../../src/types/index';
 import { categoryLabels } from '../../../src/data/technologies';
@@ -148,6 +148,73 @@ describe('ProjectsGrid — category filtering', () => {
     // Only Beta is in the 'tool' category → live region shows 1
     const liveRegion = document.querySelector('[aria-live="polite"]') as HTMLElement;
     expect(liveRegion.textContent).toMatch(/1/);
+  });
+});
+
+// ─── Keyboard navigation (roving tabindex, T054) ────────────────────────────
+
+describe('ProjectsGrid — keyboard navigation', () => {
+  it('ArrowRight moves focus to the next pill', () => {
+    renderGrid();
+    const group = screen.getByRole('group', { name: /technology/i });
+    const pills = within(group).getAllByRole('button');
+    pills[0]!.focus();
+    fireEvent.keyDown(group, { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(pills[1]);
+  });
+
+  it('ArrowRight wraps from the last pill back to the first', () => {
+    renderGrid();
+    const group = screen.getByRole('group', { name: /technology/i });
+    const pills = within(group).getAllByRole('button');
+    pills[pills.length - 1]!.focus();
+    fireEvent.keyDown(group, { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(pills[0]);
+  });
+
+  it('ArrowLeft moves focus to the previous pill', () => {
+    renderGrid();
+    const group = screen.getByRole('group', { name: /technology/i });
+    const pills = within(group).getAllByRole('button');
+    pills[1]!.focus();
+    fireEvent.keyDown(group, { key: 'ArrowLeft' });
+    expect(document.activeElement).toBe(pills[0]);
+  });
+
+  it('ArrowLeft wraps from the first pill back to the last', () => {
+    renderGrid();
+    const group = screen.getByRole('group', { name: /technology/i });
+    const pills = within(group).getAllByRole('button');
+    pills[0]!.focus();
+    fireEvent.keyDown(group, { key: 'ArrowLeft' });
+    expect(document.activeElement).toBe(pills[pills.length - 1]);
+  });
+
+  it('Home moves focus to the first pill', () => {
+    renderGrid();
+    const group = screen.getByRole('group', { name: /technology/i });
+    const pills = within(group).getAllByRole('button');
+    pills[2]!.focus();
+    fireEvent.keyDown(group, { key: 'Home' });
+    expect(document.activeElement).toBe(pills[0]);
+  });
+
+  it('End moves focus to the last pill', () => {
+    renderGrid();
+    const group = screen.getByRole('group', { name: /technology/i });
+    const pills = within(group).getAllByRole('button');
+    pills[0]!.focus();
+    fireEvent.keyDown(group, { key: 'End' });
+    expect(document.activeElement).toBe(pills[pills.length - 1]);
+  });
+
+  it('ignores unrelated keys and leaves focus unchanged', () => {
+    renderGrid();
+    const group = screen.getByRole('group', { name: /technology/i });
+    const pills = within(group).getAllByRole('button');
+    pills[0]!.focus();
+    fireEvent.keyDown(group, { key: 'a' });
+    expect(document.activeElement).toBe(pills[0]);
   });
 });
 

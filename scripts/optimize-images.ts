@@ -41,11 +41,11 @@ const SUPPORTED_EXTS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.tiff', '.bmp'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function log(msg: string) {
+function log(msg: string): void {
   process.stdout.write(`[optimize-images] ${msg}\n`);
 }
 
-async function ensureDir(dir: string) {
+async function ensureDir(dir: string): Promise<void> {
   if (!existsSync(dir)) await mkdir(dir, { recursive: true });
 }
 
@@ -74,7 +74,7 @@ async function processImage(inputPath: string, outputDir: string): Promise<void>
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-async function main() {
+async function main(): Promise<void> {
   if (!existsSync(INPUT_DIR)) {
     await mkdir(INPUT_DIR, { recursive: true });
     log(`Created ${INPUT_DIR} — place your original images there and re-run.`);

@@ -64,7 +64,7 @@ export function useScrollSection(): NavigationState {
       if (el) observer.observe(el);
     }
 
-    return () => {
+    return (): void => {
       observer.disconnect();
       if (debounceTimer.current !== null) {
         clearTimeout(debounceTimer.current);

@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect, useId } from 'react';
+import type React from 'react';
 import { validateName, validateEmail, validateMessage, isFormValid } from '../../utils/validation.ts';
 import type { FormValidationState, FieldState } from '../../types/index.ts';
 
@@ -39,6 +40,125 @@ function clearDraft(): void {
   } catch {
     // ignore
   }
+}
+
+// ─── FormField — shared label/input/error wrapper for text-type fields ───────
+
+interface FormFieldProps {
+  id: string;
+  label: string;
+  type: 'text' | 'email';
+  value: string;
+  error: string | undefined;
+  touched: boolean;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  autoComplete: string;
+  inputMode?: 'email';
+  maxLength?: number;
+  disabled: boolean;
+}
+
+function FormField({
+  id,
+  label,
+  type,
+  value,
+  error,
+  touched,
+  onChange,
+  onBlur,
+  autoComplete,
+  inputMode,
+  maxLength,
+  disabled,
+}: FormFieldProps): React.JSX.Element {
+  const hasError = touched && Boolean(error);
+  return (
+    <div className="form-field">
+      <label className="form-label" htmlFor={id}>
+        {label} <span className="form-required" aria-label="required">*</span>
+      </label>
+      <input
+        id={id}
+        type={type}
+        className={`form-input${hasError ? ' form-input--error' : ''}`}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
+        autoComplete={autoComplete}
+        inputMode={inputMode}
+        aria-required="true"
+        aria-describedby={hasError ? `${id}-error` : undefined}
+        aria-invalid={hasError ? 'true' : undefined}
+        maxLength={maxLength}
+        disabled={disabled}
+      />
+      {hasError && (
+        <p id={`${id}-error`} className="form-field-error" role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ─── FormTextareaField — label/textarea/char-count/error wrapper ─────────────
+
+interface FormTextareaFieldProps {
+  id: string;
+  label: string;
+  value: string;
+  error: string | undefined;
+  touched: boolean;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  rows: number;
+  maxLength: number;
+  disabled: boolean;
+}
+
+function FormTextareaField({
+  id,
+  label,
+  value,
+  error,
+  touched,
+  onChange,
+  onBlur,
+  rows,
+  maxLength,
+  disabled,
+}: FormTextareaFieldProps): React.JSX.Element {
+  const hasError = touched && Boolean(error);
+  return (
+    <div className="form-field">
+      <label className="form-label" htmlFor={id}>
+        {label} <span className="form-required" aria-label="required">*</span>
+      </label>
+      <textarea
+        id={id}
+        className={`form-input form-textarea${hasError ? ' form-input--error' : ''}`}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
+        rows={rows}
+        aria-required="true"
+        aria-describedby={hasError ? `${id}-error` : undefined}
+        aria-invalid={hasError ? 'true' : undefined}
+        maxLength={maxLength}
+        disabled={disabled}
+      />
+      <p className="form-char-count" aria-live="polite">
+        {value.length} / {maxLength}
+      </p>
+      {hasError && (
+        <p id={`${id}-error`} className="form-field-error" role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  );
 }
 
 export default function ContactForm(): React.JSX.Element {
@@ -202,85 +322,46 @@ export default function ContactForm(): React.JSX.Element {
         </div>
       )}
 
-      {/* Name */}
-      <div className="form-field">
-        <label className="form-label" htmlFor={nameId}>
-          Name <span className="form-required" aria-label="required">*</span>
-        </label>
-        <input
-          id={nameId}
-          type="text"
-          className={`form-input${state.name.touched && state.name.error ? ' form-input--error' : ''}`}
-          value={state.name.value}
-          onChange={(e) => setField('name', e.target.value)}
-          onBlur={() => handleBlur('name')}
-          autoComplete="name"
-          aria-required="true"
-          aria-describedby={state.name.touched && state.name.error ? `${nameId}-error` : undefined}
-          aria-invalid={state.name.touched && state.name.error ? 'true' : undefined}
-          maxLength={100}
-          disabled={state.isSubmitting}
-        />
-        {state.name.touched && state.name.error && (
-          <p id={`${nameId}-error`} className="form-field-error" role="alert">
-            {state.name.error}
-          </p>
-        )}
-      </div>
+      <FormField
+        id={nameId}
+        label="Name"
+        type="text"
+        value={state.name.value}
+        error={state.name.error}
+        touched={state.name.touched}
+        onChange={(value) => setField('name', value)}
+        onBlur={() => handleBlur('name')}
+        autoComplete="name"
+        maxLength={100}
+        disabled={state.isSubmitting}
+      />
 
-      {/* Email */}
-      <div className="form-field">
-        <label className="form-label" htmlFor={emailId}>
-          Email <span className="form-required" aria-label="required">*</span>
-        </label>
-        <input
-          id={emailId}
-          type="email"
-          className={`form-input${state.email.touched && state.email.error ? ' form-input--error' : ''}`}
-          value={state.email.value}
-          onChange={(e) => setField('email', e.target.value)}
-          onBlur={() => handleBlur('email')}
-          autoComplete="email"
-          inputMode="email"
-          aria-required="true"
-          aria-describedby={state.email.touched && state.email.error ? `${emailId}-error` : undefined}
-          aria-invalid={state.email.touched && state.email.error ? 'true' : undefined}
-          disabled={state.isSubmitting}
-        />
-        {state.email.touched && state.email.error && (
-          <p id={`${emailId}-error`} className="form-field-error" role="alert">
-            {state.email.error}
-          </p>
-        )}
-      </div>
+      <FormField
+        id={emailId}
+        label="Email"
+        type="email"
+        value={state.email.value}
+        error={state.email.error}
+        touched={state.email.touched}
+        onChange={(value) => setField('email', value)}
+        onBlur={() => handleBlur('email')}
+        autoComplete="email"
+        inputMode="email"
+        disabled={state.isSubmitting}
+      />
 
-      {/* Message */}
-      <div className="form-field">
-        <label className="form-label" htmlFor={messageId}>
-          Message <span className="form-required" aria-label="required">*</span>
-        </label>
-        <textarea
-          id={messageId}
-          className={`form-input form-textarea${state.message.touched && state.message.error ? ' form-input--error' : ''}`}
-          value={state.message.value}
-          onChange={(e) => setField('message', e.target.value)}
-          onBlur={() => handleBlur('message')}
-          rows={6}
-          aria-required="true"
-          aria-describedby={state.message.touched && state.message.error ? `${messageId}-error` : undefined}
-          aria-invalid={state.message.touched && state.message.error ? 'true' : undefined}
-          maxLength={5000}
-          disabled={state.isSubmitting}
-        />
-        <p className="form-char-count" aria-live="polite">
-          {state.message.value.length} / 5000
-        </p>
-        {state.message.touched && state.message.error && (
-          <p id={`${messageId}-error`} className="form-field-error" role="alert">
-            {state.message.error}
-          </p>
-        )}
-      </div>
+      <FormTextareaField
+        id={messageId}
+        label="Message"
+        value={state.message.value}
+        error={state.message.error}
+        touched={state.message.touched}
+        onChange={(value) => setField('message', value)}
+        onBlur={() => handleBlur('message')}
+        rows={6}
+        maxLength={5000}
+        disabled={state.isSubmitting}
+      />
 
       {/* Honeypot — hidden from users, filled only by bots */}
       <div className="form-honeypot" aria-hidden="true">

@@ -4,11 +4,21 @@
  * Tests: rendering, technology filters, category filters, "no results" state, aria-live region.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import ProjectsGrid from '../../../src/components/sections/ProjectsGrid';
 import type { Project, ProjectCategory } from '../../../src/types/index';
 import { categoryLabels } from '../../../src/data/technologies';
+
+// src/data/technologies.ts imports src/data/projects.ts, which reads the
+// `projects` content collection via `astro:content` — a server-only virtual
+// module that Astro refuses to load in this file's jsdom (client-like)
+// environment. This test only needs the static `categoryLabels` map, so stub
+// it out rather than pulling in the real content-collection machinery.
+vi.mock('astro:content', () => ({
+  getCollection: async () => [],
+  getEntry: async () => undefined,
+}));
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 

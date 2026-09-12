@@ -4,6 +4,7 @@ export default getViteConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    globalSetup: ['./tests/global-setup.ts'],
     setupFiles: ['./tests/setup.ts'],
     include: ['tests/unit/**/*.test.{ts,tsx}', 'tests/integration/**/*.test.{ts,tsx}'],
     exclude: ['tests/e2e/**', 'node_modules/**', 'dist/**'],

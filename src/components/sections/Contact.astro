@@ -3,14 +3,25 @@
  * Contact.astro — Static section wrapper for the ContactForm React island.
  * T045: Scroll-triggered entrance animation via IntersectionObserver.
  */
+import { getEntry } from 'astro:content';
 import ContactForm from './ContactForm.tsx';
+import type { ContactCopy } from '../../content/config.ts';
+
+const contactEntry = await getEntry('copy', 'contact');
+if (!contactEntry) {
+  throw new Error(
+    'Missing content/copy/contact.yaml — the copy collection has no "contact" entry. ' +
+      'Check that the content/ submodule is initialized and populated.',
+  );
+}
+const { heading, subheading } = contactEntry.data as ContactCopy;
 ---
 
 <section id="contact" class="contact-section" aria-labelledby="contact-heading">
   <div class="section">
-    <h2 id="contact-heading" class="section-heading">Get in Touch</h2>
+    <h2 id="contact-heading" class="section-heading">{heading}</h2>
     <p class="section-subheading">
-      Have a project in mind or want to say hello? I'd love to hear from you.
+      {subheading}
     </p>
 
     <ContactForm client:visible />

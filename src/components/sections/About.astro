@@ -4,6 +4,17 @@
  * T037: Scroll-triggered entrance animations (portrait fades from left,
  *        bio text fades from right). Respects prefers-reduced-motion.
  */
+import { getEntry } from 'astro:content';
+import type { AboutCopy } from '../../content/config.ts';
+
+const aboutEntry = await getEntry('copy', 'about');
+if (!aboutEntry) {
+  throw new Error(
+    'Missing content/copy/about.yaml — the copy collection has no "about" entry. ' +
+      'Check that the content/ submodule is initialized and populated.',
+  );
+}
+const { bioParagraphs, skills } = aboutEntry.data as AboutCopy;
 ---
 
 <section id="about" class="about-section" aria-labelledby="about-heading">
@@ -11,40 +22,14 @@
     <div class="about-text about-animate-text">
       <h2 id="about-heading" class="section-heading">About Me</h2>
 
-      <p class="about-bio">
-        I'm a frontend engineer at the start of my career, passionate about building
-        web experiences that are fast, accessible, and genuinely enjoyable to use.
-        I've spent the past year deepening my skills through self-directed projects —
-        the kind that push me to solve real problems.
-      </p>
-      <p class="about-bio">
-        My focus is the JavaScript and React ecosystem. I care about the details that
-        matter: semantic HTML, keyboard navigation, performance on real devices, and
-        animations that respect motion preferences. I believe good UI is invisible —
-        it just works, for everyone.
-      </p>
-      <p class="about-bio">
-        I'm actively looking for my first professional role where I can contribute,
-        keep learning fast, and grow alongside a team that takes craft seriously.
-      </p>
+      {bioParagraphs.map((paragraph) => <p class="about-bio">{paragraph}</p>)}
 
       <div class="about-skills-section" aria-label="Core technical skills">
         <h3 class="about-skills-heading">Core Skills</h3>
         <ul class="about-skills-list" role="list">
-          {
-            [
-              'TypeScript / JavaScript',
-              'React',
-              'Node.js & REST APIs',
-              'Next.js',
-              'Tailwind CSS & CSS',
-              'Accessibility (WCAG 2.1 AA)',
-              'Git & GitHub Actions',
-              'Testing (Vitest, Playwright)',
-            ].map((skill) => (
-              <li class="about-skill-item">{skill}</li>
-            ))
-          }
+          {skills.map((skill) => (
+            <li class="about-skill-item">{skill}</li>
+          ))}
         </ul>
       </div>
     </div>

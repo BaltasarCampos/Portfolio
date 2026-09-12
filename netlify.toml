@@ -1,8 +1,12 @@
 # netlify.toml — Deployment configuration for Netlify
 # https://docs.netlify.com/configure-builds/file-based-configuration/
 
+# CONTENT_REPO_TOKEN is a Netlify environment variable (a fine-grained GitHub PAT,
+# read-only, scoped to BaltasarCampos/portfolio-content) used to authenticate the
+# private content/ submodule checkout. It rewrites GitHub HTTPS URLs to include the
+# token, then initializes the submodule before building.
 [build]
-  command   = "npm run build"
+  command   = "git config --global url.\"https://${CONTENT_REPO_TOKEN}@github.com/\".insteadOf \"https://github.com/\" && git submodule update --init --recursive && npm run build"
   publish   = "dist"
 
 [functions]

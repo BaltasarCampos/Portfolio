@@ -5,7 +5,18 @@
  * HeroAnimated React island that wraps the content when JS is available.
  * Falls back to instant visibility when JS is disabled or not yet loaded.
  */
+import { getEntry } from 'astro:content';
 import Button from '../ui/Button.astro';
+import type { HeroCopy } from '../../content/config.ts';
+
+const heroEntry = await getEntry('copy', 'hero');
+if (!heroEntry) {
+  throw new Error(
+    'Missing content/copy/hero.yaml — the copy collection has no "hero" entry. ' +
+      'Check that the content/ submodule is initialized and populated.',
+  );
+}
+const { eyebrow, heading, role, statement } = heroEntry.data as HeroCopy;
 ---
 
 <section
@@ -15,19 +26,18 @@ import Button from '../ui/Button.astro';
 >
   <div class="hero-content">
     <!-- Static content visible immediately — no JS dependency -->
-    <p class="hero-eyebrow">Hello, I'm</p>
+    <p class="hero-eyebrow">{eyebrow}</p>
 
     <h1 class="hero-heading">
-      Baltasar Campos
+      {heading}
     </h1>
 
     <p class="hero-role">
-      Frontend Engineer
+      {role}
     </p>
 
     <p class="hero-statement">
-      I build fast, accessible, and polished web experiences. Focused on performance,
-      clean architecture, and the details that make the difference.
+      {statement}
     </p>
 
     <div class="hero-cta-group">

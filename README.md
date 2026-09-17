@@ -261,10 +261,10 @@ Tests cover:
 3. Build command: `npm run build`
 4. Publish directory: `dist`
 5. Add environment variables (see [Environment Variables](#environment-variables))
-6. Add a `CONTENT_REPO_TOKEN` environment variable — a read-only, fine-grained GitHub PAT scoped to the private `portfolio-content` repository. Netlify's build command uses it to authenticate the `content/` submodule checkout (see `netlify.toml`).
+6. Grant Netlify read access to the private `content/` submodule (`portfolio-content`): open **Site configuration → Build & deploy → Deploy keys**, copy the site's own SSH public key, and add it as a **read-only deploy key** on the `portfolio-content` repository (Settings → Deploy keys). Netlify then checks out the submodule automatically — no build-command scripting needed (see `netlify.toml`).
 7. Deploy ✅
 
-The included **GitHub Actions** workflows run type-check, lint, and tests on every push. The `build.yml` workflow also needs the same `CONTENT_REPO_TOKEN` added as a **repository secret** (Settings → Secrets and variables → Actions) so it can check out the private submodule during CI.
+The included **GitHub Actions** workflows (`build.yml`, `test.yml`) also need read access to `portfolio-content` to check out the submodule in CI. Generate a dedicated SSH keypair (`ssh-keygen -t ed25519 -C "portfolio-ci" -f content-ci-key -N ""`), add the **public** half as a read-only deploy key on `portfolio-content`, and add the **private** half as a repository secret named `CONTENT_REPO_DEPLOY_KEY` (Settings → Secrets and variables → Actions) on `BaltasarCampos/Portfolio`. Delete the local key file after adding it.
 
 ### Contact form
 

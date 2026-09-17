@@ -11,10 +11,14 @@ jobs:
     name: Production Build
     runs-on: ubuntu-latest
     steps:
+      - name: Load content-repo deploy key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.CONTENT_REPO_DEPLOY_KEY }}
+
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-          token: ${{ secrets.CONTENT_REPO_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

@@ -1,0 +1,133 @@
+---
+/**
+ * About.astro — Personal bio and skills section.
+ * T037: Scroll-triggered entrance animations (portrait fades from left,
+ *        bio text fades from right). Respects prefers-reduced-motion.
+ */
+import { getEntry } from 'astro:content';
+import type { AboutCopy } from '../../content/config.ts';
+
+const aboutEntry = await getEntry('copy', 'about');
+if (!aboutEntry) {
+  throw new Error(
+    'Missing content/copy/about.yaml — the copy collection has no "about" entry. ' +
+      'Check that the content/ submodule is initialized and populated.',
+  );
+}
+const { bioParagraphs, skills } = aboutEntry.data as AboutCopy;
+---
+
+<section id="about" class="about-section" aria-labelledby="about-heading">
+  <div class="section about-inner">
+    <div class="about-text about-animate-text">
+      <h2 id="about-heading" class="section-heading">About Me</h2>
+
+      {bioParagraphs.map((paragraph) => <p class="about-bio">{paragraph}</p>)}
+
+      <div class="about-skills-section" aria-label="Core technical skills">
+        <h3 class="about-skills-heading">Core Skills</h3>
+        <ul class="about-skills-list" role="list">
+          {skills.map((skill) => (
+            <li class="about-skill-item">{skill}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-section {
+    padding-block: var(--section-padding-y);
+  }
+
+  .about-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .about-text {
+    max-width: 65ch;
+  }
+
+  .about-bio {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .about-skills-section {
+    margin-top: 2rem;
+  }
+
+  .about-skills-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .about-skills-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .about-skill-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    padding: 0.375rem 0;
+  }
+
+  .about-skill-item::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    flex-shrink: 0;
+  }
+
+  /* T037 — scroll-triggered animation (JS adds .is-visible class) */
+  @media (prefers-reduced-motion: no-preference) {
+    .about-animate-text {
+      opacity: 0;
+      transform: translateX(2rem);
+      transition:
+        opacity 0.6s var(--easing-out),
+        transform 0.6s var(--easing-out);
+    }
+
+    .about-animate-text.is-visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+</style>
+
+<!-- T037: IntersectionObserver adds .is-visible when section enters viewport -->
+<script>
+  const el = document.querySelector<HTMLElement>('.about-animate-text');
+  if (el && typeof IntersectionObserver !== 'undefined') {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            (entry.target as HTMLElement).classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(el);
+  }
+</script>

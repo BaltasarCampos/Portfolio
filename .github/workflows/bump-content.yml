@@ -41,6 +41,17 @@ jobs:
           echo "new_sha=$(git -C content rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "short_sha=$(git -C content rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
+      # actions/checkout's ssh-key input points origin itself at an SSH URL authenticated
+      # with the (read-only) submodule deploy key, not just the content/ submodule. Left
+      # as-is, create-pull-request's push below would silently go out over that read-only
+      # SSH channel instead of HTTPS with CONTENT_BUMP_PAT. Safe to drop now that the
+      # submodule read is done.
+      - name: Switch origin back to HTTPS
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git remote set-url origin https://github.com/${{ github.repository }}.git
+          git config --local --unset-all core.sshCommand || true
+
       - name: Open or update pointer-bump pull request
         if: steps.diff.outputs.changed == 'true'
         id: cpr

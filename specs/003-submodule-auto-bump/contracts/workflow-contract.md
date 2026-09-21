@@ -23,6 +23,7 @@ No new secret is needed for the approval step — it uses the default `GITHUB_TO
 ## Required repository configuration (one-time, non-workflow)
 
 - The repository's "Allow auto-merge" setting must be enabled (Settings → General → Pull Requests) for `gh pr merge --auto` to have any effect.
+- **"Allow GitHub Actions to create and approve pull requests" must be enabled** (Settings → Actions → General → Workflow permissions). This is a separate, off-by-default guard rail from `permissions: pull-requests: write` — with it off, `gh pr review --approve` authenticated as `github-actions[bot]` is rejected outright ("GitHub Actions is not permitted to approve pull requests"), regardless of the job's declared permissions. Discovered during live validation (T007); not caught by design-time review since it isn't observable from the workflow YAML alone.
 - No branch-protection bypass or review exemption is required. The existing "minimum 1 approval" rule is satisfied directly: the default `GITHUB_TOKEN` identity (`github-actions[bot]`, distinct from the `CONTENT_BUMP_PAT` actor that authors the PR — GitHub disallows an actor approving its own PR) submits an approving review before auto-merge is enabled. Branch protection stays unchanged for every other PR.
 
 ## Job steps (contract, not implementation)

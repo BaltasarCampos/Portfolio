@@ -1,0 +1,71 @@
+name: Bump Content
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  bump-content:
+    name: Bump Content
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+          ssh-key: ${{ secrets.CONTENT_REPO_DEPLOY_KEY }}
+
+      - name: Record current content pointer
+        id: before
+        run: echo "old_sha=$(git -C content rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Update content submodule to latest
+        run: git submodule update --remote content
+
+      - name: Check for pointer change
+        id: diff
+        run: |
+          if git diff --quiet -- content; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Record new content pointer
+        if: steps.diff.outputs.changed == 'true'
+        id: after
+        run: |
+          echo "new_sha=$(git -C content rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$(git -C content rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Open or update pointer-bump pull request
+        if: steps.diff.outputs.changed == 'true'
+        id: cpr
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.CONTENT_BUMP_PAT }}
+          branch: chore/bump-content
+          delete-branch: true
+          commit-message: "chore: bump content submodule to ${{ steps.after.outputs.short_sha }}"
+          title: "chore: bump content submodule to ${{ steps.after.outputs.short_sha }}"
+          body: |
+            Bumps the `content` submodule to [`${{ steps.after.outputs.short_sha }}`](https://github.com/BaltasarCampos/portfolio-content/commit/${{ steps.after.outputs.new_sha }}) (full SHA: `${{ steps.after.outputs.new_sha }}`).
+
+            Compare: https://github.com/BaltasarCampos/portfolio-content/compare/${{ steps.before.outputs.old_sha }}...${{ steps.after.outputs.new_sha }}
+
+            This PR was opened automatically by the `Bump Content` workflow.
+
+      - name: Approve pointer-bump pull request
+        if: steps.diff.outputs.changed == 'true' && steps.cpr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-url }}"
+
+      - name: Enable auto-merge on pointer-bump pull request
+        if: steps.diff.outputs.changed == 'true' && steps.cpr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ secrets.CONTENT_BUMP_PAT }}
+        run: gh pr merge --auto --squash "${{ steps.cpr.outputs.pull-request-url }}"

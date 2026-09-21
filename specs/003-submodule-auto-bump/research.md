@@ -13,7 +13,7 @@ All items below were either resolved during `/speckit.clarify` (recorded in [spe
 
 ## 2. Opening/updating the pointer-bump pull request
 
-**Decision**: Use `peter-evans/create-pull-request@v7`, a widely-used, actively maintained GitHub Action purpose-built for "commit changes, open or update a PR" workflows (this is the same category of action commonly used for Dependabot-style version-bump automation).
+**Decision**: Use `peter-evans/create-pull-request@v8`, a widely-used, actively maintained GitHub Action purpose-built for "commit changes, open or update a PR" workflows (this is the same category of action commonly used for Dependabot-style version-bump automation).
 
 **Rationale**: Its default behavior already satisfies FR-004/FR-005 out of the box — when pointed at a fixed `branch:` name, it updates the existing PR if one is open and unmerged, and does nothing if there's no diff to commit. This avoids hand-rolling PR create-vs-update branching logic (which would be exactly the kind of custom business logic Constitution Principle II would require tests for).
 

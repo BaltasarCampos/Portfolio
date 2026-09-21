@@ -12,7 +12,7 @@ Add a scheduled GitHub Actions workflow in the Site repository that checks the C
 ## Technical Context
 
 **Language/Version**: YAML (GitHub Actions workflow syntax) + POSIX shell steps; Node 22 (already the repo's runtime) available to any inline scripting needed
-**Primary Dependencies**: `actions/checkout@v7` (submodule checkout, already in use), `peter-evans/create-pull-request@v7` (create-or-update PR semantics — satisfies FR-004's "update existing proposal" behavior out of the box), GitHub CLI `gh` (pre-installed on `ubuntu-latest` runners, used to enable native auto-merge), git itself (`git submodule update --remote`, SHA comparison)
+**Primary Dependencies**: `actions/checkout@v7` (submodule checkout, already in use), `peter-evans/create-pull-request@v8` (create-or-update PR semantics — satisfies FR-004's "update existing proposal" behavior out of the box), GitHub CLI `gh` (pre-installed on `ubuntu-latest` runners, used to enable native auto-merge), git itself (`git submodule update --remote`, SHA comparison)
 **Storage**: N/A — no new persisted state; the Content repository's latest commit and the Site repository's existing open PR (if any) are the only state consulted, both read live via git/GitHub API on each run
 **Testing**: No new application code is introduced (see Constitution Check, Principle II) — validation is a documented manual dry run via `workflow_dispatch` (quickstart.md) plus the workflow's own run history in the Actions tab, which is the existing observability mechanism for every other scheduled/CI workflow in this repo
 **Target Platform**: GitHub Actions (`ubuntu-latest` runner), operating against two GitHub repositories (Site + Content)

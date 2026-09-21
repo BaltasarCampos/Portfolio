@@ -30,7 +30,7 @@ No new secret is needed for the approval step — it uses the default `GITHUB_TO
 1. Checkout the Site repository with submodules (`actions/checkout@v7`, `submodules: true`, `ssh-key: CONTENT_REPO_DEPLOY_KEY`).
 2. `git submodule update --remote content` — advances the local submodule checkout to the Content repository's default-branch HEAD.
 3. If `content`'s pointer is unchanged (`git diff --quiet -- content`): stop here, no further steps run (FR-005). This is the "no PR opened/modified" path.
-4. If changed: run `peter-evans/create-pull-request@v7` with:
+4. If changed: run `peter-evans/create-pull-request@v8` with:
    - `token: secrets.CONTENT_BUMP_PAT`
    - `branch: chore/bump-content` (fixed — enforces FR-004's single-open-proposal behavior)
    - `commit-message`, `title`, `body` per the PR content contract below

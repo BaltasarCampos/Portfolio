@@ -44,7 +44,7 @@ jobs:
       - name: Open or update pointer-bump pull request
         if: steps.diff.outputs.changed == 'true'
         id: cpr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.CONTENT_BUMP_PAT }}
           branch: chore/bump-content

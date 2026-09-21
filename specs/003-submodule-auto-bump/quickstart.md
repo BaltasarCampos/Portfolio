@@ -8,6 +8,7 @@ This is a manual validation guide (see plan.md's Constitution Check, Principle I
 - New `CONTENT_BUMP_PAT` secret created (fine-grained PAT, `contents: write` + `pull-requests: write`, scoped to this repository only) and added to the Site repository's secrets.
 - The workflow declares `permissions: pull-requests: write` so the default `GITHUB_TOKEN` can submit an approving review (no branch-protection changes needed — see contracts/workflow-contract.md's "Required repository configuration").
 - "Allow auto-merge" enabled in repository settings.
+- "Allow GitHub Actions to create and approve pull requests" enabled (Settings → Actions → General → Workflow permissions) — without this, the approval step fails with "GitHub Actions is not permitted to approve pull requests" even though the job has `permissions: pull-requests: write`.
 - Push access to the Content repository (`portfolio-content`) for the dry-run steps below.
 
 ## Scenario 1 — Happy path: newer content triggers a PR that auto-merges
